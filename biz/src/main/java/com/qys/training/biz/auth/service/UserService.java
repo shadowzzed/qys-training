@@ -12,6 +12,8 @@ public interface UserService {
 	 */
 	Long create(User user);
 
+	User checkUser(User user);
+
 	/**
 	 * 测试业务异常
 	 */

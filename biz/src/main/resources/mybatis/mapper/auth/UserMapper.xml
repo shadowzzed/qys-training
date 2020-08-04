@@ -16,5 +16,9 @@
     <select id="queryUser" parameterType="java.lang.String" resultType="java.lang.String">
         SELECT USERNAME FROM user WHERE USERNAME = #{username}
     </select>
+
+    <select id="getOneUser" parameterType="java.lang.String" resultType="com.qys.training.biz.auth.entity.User">
+        SELECT USERNAME, PASSOWRD FROM user where username = #{username}
+    </select>
     
 </mapper>

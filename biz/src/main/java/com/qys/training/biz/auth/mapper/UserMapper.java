@@ -8,4 +8,6 @@ public interface UserMapper{
 	int insert(User user);
 
 	String queryUser(String username);
+
+	User getOneUser(String username);
 }

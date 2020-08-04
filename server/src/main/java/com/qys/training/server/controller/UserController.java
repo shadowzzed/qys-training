@@ -27,6 +27,13 @@ public class UserController {
         return BaseResult.success(id);
     }
 
+    @GetMapping(params = "/check")
+    @ResponseBody
+    public BaseResult checkUser(@RequestBody User user) {
+        final User user_db = this.userService.checkUser(user);
+        return BaseResult.success();
+    }
+
     @PostMapping(path = "/testQysException")
     public @ResponseBody
     BaseResult testQysException(){
