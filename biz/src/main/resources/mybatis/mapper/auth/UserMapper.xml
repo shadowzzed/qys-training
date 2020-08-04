@@ -18,7 +18,7 @@
     </select>
 
     <select id="getOneUser" parameterType="java.lang.String" resultType="com.qys.training.biz.auth.entity.User">
-        SELECT USERNAME, PASSOWRD FROM user where username = #{username}
+        SELECT USERNAME, PASSWORD FROM user where username = #{username}
     </select>
     
 </mapper>

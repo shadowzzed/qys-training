@@ -7,5 +7,5 @@ import org.springframework.web.multipart.MultipartFile;
  * @date 13:22 2020/8/4
  */
 public interface FtpService {
-    void upload(MultipartFile file);
+    int upload(MultipartFile file);
 }

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.qys.training.biz.ftp.mapper.FtpMapper" >
+    <insert id="insertFile" parameterType="com.qys.training.biz.ftp.entity.File" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO t_upload_file (
+        file_name,
+        file_size,
+        file_path,
+        file_hash
+        ) VALUES (
+        #{fileName},
+        #{fileSize},
+        #{filePath},
+        #{fileHash}
+        )
+    </insert>
+</mapper>

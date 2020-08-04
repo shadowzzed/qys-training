@@ -12,4 +12,8 @@ public class FtpConfig {
 
     @Value("${qys.file.storage.path}")
     public String filePath;
+
+    @Value("${qys.file.storage.limit}")
+    public String limitSize;
+
 }

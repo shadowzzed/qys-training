@@ -36,12 +36,6 @@ public class UserController {
         return BaseResult.success();
     }
 
-    @PostMapping(path = "/upload")
-    @ResponseBody
-    public BaseResult uploadPDF(@RequestParam("file")MultipartFile file) {
-        return BaseResult.success();
-    }
-
     @PostMapping(path = "/testQysException")
     public @ResponseBody
     BaseResult testQysException(){
