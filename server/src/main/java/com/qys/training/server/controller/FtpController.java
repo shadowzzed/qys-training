@@ -1,6 +1,7 @@
 package com.qys.training.server.controller;
 
 import com.qys.training.base.dto.BaseResult;
+import com.qys.training.biz.ftp.entity.File;
 import com.qys.training.biz.ftp.entity.QueryFileParam;
 import com.qys.training.biz.ftp.service.FtpService;
 import org.slf4j.Logger;
@@ -57,8 +58,8 @@ public class FtpController {
     @GetMapping(path = "/selectbatch")
     @ResponseBody
     public BaseResult selectBatch(@RequestBody QueryFileParam param) {
-        ftpService.selectFileDB(param);
-        return BaseResult.success();
+        final List<File> files = ftpService.selectFileDB(param);
+        return BaseResult.success(files);
     }
 
     @GetMapping(path = "/downloadzip")
