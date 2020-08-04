@@ -6,5 +6,6 @@ import org.springframework.stereotype.Repository;
 public interface UserMapper{
 
 	int insert(User user);
-	
+
+	String queryUser(String username);
 }

@@ -12,5 +12,9 @@
           #{password}
         )
     </insert>
+
+    <select id="queryUser" parameterType="java.lang.String" resultType="java.lang.String">
+        SELECT USERNAME FROM user WHERE USERNAME = #{username}
+    </select>
     
 </mapper>
