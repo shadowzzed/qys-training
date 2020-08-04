@@ -8,4 +8,5 @@ import org.springframework.web.multipart.MultipartFile;
  */
 public interface FtpService {
     int upload(MultipartFile file);
+    void update(MultipartFile file, long fileId);
 }

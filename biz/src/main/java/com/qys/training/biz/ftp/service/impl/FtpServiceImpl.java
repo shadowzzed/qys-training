@@ -9,6 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -42,7 +43,7 @@ public class FtpServiceImpl implements FtpService {
         final String originalFilename = multipartFile.getOriginalFilename();
         if (!originalFilename.endsWith(".pdf"))
             throw new QysException(BizCodeEnum.WRONG_PARAM.getCode(), BizCodeEnum.WRONG_PARAM.getDescription());
-        logger.info("get file name = {}", originalFilename);
+        logger.info("upload -- get file name = {}", originalFilename);
         final long limitSize = this.getLimitSize();
         final long fileSize = multipartFile.getSize();
         logger.info("get limitsize = {}", limitSize);
@@ -51,7 +52,7 @@ public class FtpServiceImpl implements FtpService {
         logger.info("文件总共{} byte", fileSize);
         com.qys.training.biz.ftp.entity.File file_db = new com.qys.training.biz.ftp.entity.File();
         file_db.setFileSize(fileSize);
-        file_db.setFileName(multipartFile.getName());
+        file_db.setFileName(originalFilename);
         final String dirPath = this.getTodayFileDir();
         File dir = new File(dirPath);
         if (!dir.exists())
@@ -76,6 +77,43 @@ public class FtpServiceImpl implements FtpService {
             file_db.setFileHash(md5);
             logger.info("插入数据库文件{}", file_db);
             return ftpMapper.insertFile(file_db);
+        } catch (IOException | NoSuchAlgorithmException e) {
+            throw new QysException(BizCodeEnum.UNKNOWN_ERROR.getCode(), BizCodeEnum.UNKNOWN_ERROR.getDescription());
+        }
+    }
+
+    @Override
+    public void update(MultipartFile multipartFile, long fileId) {
+        if (fileId < 0)
+            throw new QysException(BizCodeEnum.WRONG_PARAM.getCode(), BizCodeEnum.WRONG_PARAM.getDescription());
+        final String filePath = ftpMapper.getFilePath(fileId);
+        if (StringUtils.isEmpty(filePath))
+            throw new QysException(BizCodeEnum.FILE_NOT_EXISTED.getCode(), BizCodeEnum.FILE_NOT_EXISTED.getDescription());
+        File file = new File(filePath);
+        if (!file.delete())
+            throw new QysException(BizCodeEnum.UNKNOWN_ERROR.getCode(), BizCodeEnum.UNKNOWN_ERROR.getDescription());
+        com.qys.training.biz.ftp.entity.File file_db = new com.qys.training.biz.ftp.entity.File();
+        final String originalFilename = multipartFile.getOriginalFilename();
+        final long size = multipartFile.getSize();
+        logger.info("update -- 文件名{},大小{}", originalFilename, size);
+        file_db.setFileName(originalFilename);
+        file_db.setFileSize(size);
+        try (InputStream inputStream = multipartFile.getInputStream();
+        OutputStream outputStream = new FileOutputStream(file)) {
+            MessageDigest md = MessageDigest.getInstance("MD5");
+            byte[] bytes = new byte[1024];
+            // 记录最后一次读取的结尾序号
+            int n = 0;
+            while ((n = inputStream.read(bytes)) != -1) {
+                outputStream.write(bytes, 0, n);
+                md.update(bytes, 0, n);
+            }
+            logger.info("完成文件上传");
+            final String md5 = this.getMD5(md);
+            file_db.setFileHash(md5);
+            file_db.setId(fileId);
+            ftpMapper.updateFile(file_db);
+            logger.info("修改的参数{}",file_db);
         } catch (IOException | NoSuchAlgorithmException e) {
             throw new QysException(BizCodeEnum.UNKNOWN_ERROR.getCode(), BizCodeEnum.UNKNOWN_ERROR.getDescription());
         }

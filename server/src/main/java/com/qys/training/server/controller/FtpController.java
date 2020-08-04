@@ -19,8 +19,14 @@ public class FtpController {
     @PostMapping(path = "/upload")
     @ResponseBody
     public BaseResult uploadPDF(@RequestParam("file") MultipartFile file) {
-        System.out.println(1);
         final int upload = ftpService.upload(file);
         return BaseResult.success(upload);
+    }
+
+    @PostMapping(path = "/update")
+    @ResponseBody
+    public BaseResult updatePDF(@RequestParam("file") MultipartFile file, @RequestParam("id")int id) {
+        ftpService.update(file, id);
+        return BaseResult.success();
     }
 }

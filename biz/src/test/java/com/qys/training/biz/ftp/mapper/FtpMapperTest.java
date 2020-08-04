@@ -34,4 +34,19 @@ public class FtpMapperTest {
         file.setFilePath("22");
         System.out.println(ftpMapper.insertFile(file));
     }
+
+    @Test
+    public void testFindFilePath() {
+        System.out.println(ftpMapper.getFilePath(2));
+    }
+
+    @Test
+    public void updateTest() {
+        File file = new File();
+        file.setFileHash("1");
+        file.setFileSize(1L);
+        file.setFileName("22");
+        file.setId(2L);
+        ftpMapper.updateFile(file);
+    }
 }

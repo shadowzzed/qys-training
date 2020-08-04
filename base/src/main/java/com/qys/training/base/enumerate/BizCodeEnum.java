@@ -11,7 +11,8 @@ public enum BizCodeEnum {
     LOST_PARAM("LOST_PARAM", "缺少参数"),
     USER_EXISTED("USER_EXISTED", "用户已存在"),
     WRONG_PARAM("WRONG_PARAM", "参数错误"),
-    FILE_TOO_LARGE("FILE_TOO_LARGE", "文件过大")
+    FILE_TOO_LARGE("FILE_TOO_LARGE", "文件过大"),
+    FILE_NOT_EXISTED("FILE_NOT_EXISTED", "文件不存在")
 
     ;
 
