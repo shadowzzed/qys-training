@@ -13,8 +13,11 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.math.BigInteger;
+import java.net.URLEncoder;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.time.Instant;
@@ -84,8 +87,7 @@ public class FtpServiceImpl implements FtpService {
 
     @Override
     public void update(MultipartFile multipartFile, long fileId) {
-        if (fileId < 0)
-            throw new QysException(BizCodeEnum.WRONG_PARAM.getCode(), BizCodeEnum.WRONG_PARAM.getDescription());
+        this.checkId(fileId);
         final String filePath = ftpMapper.getFilePath(fileId);
         if (StringUtils.isEmpty(filePath))
             throw new QysException(BizCodeEnum.FILE_NOT_EXISTED.getCode(), BizCodeEnum.FILE_NOT_EXISTED.getDescription());
@@ -119,6 +121,42 @@ public class FtpServiceImpl implements FtpService {
         }
     }
 
+    @Override
+    public void download(long id, HttpServletResponse resp) throws UnsupportedEncodingException {
+        this.checkId(id);
+        final String path = ftpMapper.getFilePath(id);
+        if (StringUtils.isEmpty(path))
+            throw new QysException(BizCodeEnum.FILE_NOT_EXISTED.getCode(), BizCodeEnum.FILE_NOT_EXISTED.getDescription());
+        final String fileName = ftpMapper.getFileName(id);
+        logger.info("下载文件名字{}", fileName);
+        resp.setContentType("application/force-download");
+        resp.addHeader("Content-Disposition", "attachment;filename="+ URLEncoder.encode(fileName, "UTF-8"));
+        File file = new File(path);
+        try (InputStream inputStream = new FileInputStream(file);
+             ServletOutputStream outputStream = resp.getOutputStream()) {
+            byte[] bytes = new byte[1024];
+            int n = 0;
+            while ((n = inputStream.read(bytes)) != -1) {
+                outputStream.write(bytes, 0, n);
+            }
+            outputStream.flush();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void delete(long id) {
+        this.checkId(id);
+        final String filePath = ftpMapper.getFilePath(id);
+        if (StringUtils.isEmpty(filePath))
+            throw new QysException(BizCodeEnum.LOST_PARAM.getCode(), BizCodeEnum.LOST_PARAM.getDescription());
+        File file = new File(filePath);
+        if (!file.delete()) {
+            throw new QysException(BizCodeEnum.UNKNOWN_ERROR.getCode(), BizCodeEnum.UNKNOWN_ERROR.getDescription());
+        }
+    }
+
     private String getMD5(MessageDigest md) {
         final byte[] bytes = md.digest();
         final BigInteger bigInteger = new BigInteger(1, bytes);
@@ -137,6 +175,11 @@ public class FtpServiceImpl implements FtpService {
         final long size = Integer.parseInt(ftpConfig.limitSize);
         long i = 1 << 30;
         return i * size;
+    }
+
+    private void checkId(long fileId) {
+        if (fileId < 0)
+            throw new QysException(BizCodeEnum.WRONG_PARAM.getCode(), BizCodeEnum.WRONG_PARAM.getDescription());
     }
 
     private String getMd5String(String path) throws NoSuchAlgorithmException {
