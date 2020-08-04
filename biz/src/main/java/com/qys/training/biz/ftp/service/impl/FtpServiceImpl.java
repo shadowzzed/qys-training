@@ -26,6 +26,8 @@ import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.UUID;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 /**
  * @author Zed, shadowl91@163.com
@@ -165,6 +167,17 @@ public class FtpServiceImpl implements FtpService {
         return ftpMapper.selectFileDB(param);
     }
 
+    @Override
+    public void downloadZIP(List<Long> list, HttpServletResponse resp) throws IOException {
+        if (list.size() < 1)
+            throw new QysException(BizCodeEnum.WRONG_PARAM.getCode(), BizCodeEnum.WRONG_PARAM.getDescription());
+        resp.setCharacterEncoding("UTF-8");
+        resp.setContentType("application/x-msdownload");
+        resp.setHeader("Content-Disposition", "attachment;filename=" + URLEncoder.encode("zip.zip", "UTF-8"));
+        final List<String> pathList = ftpMapper.selectBatchPath(list);
+        this.zipFile(pathList, resp.getOutputStream());
+    }
+
     private String getMD5(MessageDigest md) {
         final byte[] bytes = md.digest();
         final BigInteger bigInteger = new BigInteger(1, bytes);
@@ -205,5 +218,27 @@ public class FtpServiceImpl implements FtpService {
             e.printStackTrace();
         }
         return null;
+    }
+
+    private void zipFile(List<String> filePath, OutputStream outputStream) throws IOException {
+        byte[] bytes = new byte[1024];
+        ZipOutputStream zipOutputStream = new ZipOutputStream(outputStream);
+        for (String path : filePath) {
+            logger.info("get path{}",path);
+            final File file = new File(path);
+            if (!file.exists())
+                continue;
+            try (InputStream inputStream = new FileInputStream(file)) {
+                logger.info("filename {}",file.getName());
+                zipOutputStream.putNextEntry(new ZipEntry(file.getName()));
+                int n = 0;
+                while ((n = inputStream.read(bytes)) != -1) {
+                    zipOutputStream.write(bytes, 0, n);
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        zipOutputStream.close();
     }
 }

@@ -5,6 +5,7 @@ import com.qys.training.biz.ftp.entity.QueryFileParam;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.List;
 
@@ -18,4 +19,5 @@ public interface FtpService {
     void download(long id, HttpServletResponse resp) throws UnsupportedEncodingException;
     void delete(long id);
     List<File> selectFileDB(QueryFileParam param);
+    void downloadZIP(List<Long> list, HttpServletResponse resp) throws IOException;
 }

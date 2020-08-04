@@ -11,6 +11,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -29,18 +31,18 @@ public class FtpMapperTest {
     FtpMapper ftpMapper;
 
     @Test
-    public void testInserFile() {
+    public void testInsertFile() {
         File file = new File();
-        file.setFileHash("8430021a539b7e0d7ee2cd3297b6dbe");
-        file.setFileName("劳动合同参数模版-亘岩网络-lx-签署日志.pdf");
-        file.setFileSize(288048L);
-        file.setFilePath("base/files/2020-08-04/e44e2e99-c811-4843-b7a9-d108341081d5");
+        file.setFileHash("6e3f1fe8b4dfe696ebef9df6abbe0a13");
+        file.setFileName("契约锁-Linux应用扩容指南.pdf");
+        file.setFileSize(83347L);
+        file.setFilePath("base/files/2020-08-04/537fd20e-29cf-41f5-97a7-12a5e72f122b");
         System.out.println(ftpMapper.insertFile(file));
     }
 
     @Test
     public void testFindFilePath() {
-        System.out.println(ftpMapper.getFilePath(2));
+        System.out.println(ftpMapper.getFilePath(5));
     }
 
     @Test
@@ -61,5 +63,11 @@ public class FtpMapperTest {
         final List<File> list = ftpMapper.selectFileDB(p);
         list.forEach(System.out::println);
         System.out.println(list.size());
+    }
+
+    @Test
+    public void selectBatchPathTest() {
+        List<Long> list = new ArrayList<>(Arrays.asList(2L, 5L));
+        ftpMapper.selectBatchPath(list).forEach(System.out::println);
     }
 }

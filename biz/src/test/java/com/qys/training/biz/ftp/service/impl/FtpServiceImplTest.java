@@ -1,6 +1,5 @@
 package com.qys.training.biz.ftp.service.impl;
 
-import jdk.internal.util.xml.impl.Input;
 import org.junit.Test;
 
 import java.io.*;

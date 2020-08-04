@@ -3,12 +3,16 @@ package com.qys.training.server.controller;
 import com.qys.training.base.dto.BaseResult;
 import com.qys.training.biz.ftp.entity.QueryFileParam;
 import com.qys.training.biz.ftp.service.FtpService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.util.List;
 
 /**
  * @author Zed, shadowl91@163.com
@@ -19,6 +23,8 @@ import java.io.UnsupportedEncodingException;
 public class FtpController {
     @Autowired
     private FtpService ftpService;
+
+    private Logger logger = LoggerFactory.getLogger(FtpController.class);
 
     @PostMapping(path = "/upload")
     @ResponseBody
@@ -38,7 +44,7 @@ public class FtpController {
     @ResponseBody
     public BaseResult downloadPDF(@RequestParam("id")long id, HttpServletResponse resp) throws UnsupportedEncodingException {
         ftpService.download(id, resp);
-        return BaseResult.success();
+        return null;
     }
 
     @DeleteMapping(path = "/delete")
@@ -53,5 +59,13 @@ public class FtpController {
     public BaseResult selectBatch(@RequestBody QueryFileParam param) {
         ftpService.selectFileDB(param);
         return BaseResult.success();
+    }
+
+    @GetMapping(path = "/downloadzip")
+    @ResponseBody
+    public BaseResult downloadZip(HttpServletResponse resp, @RequestBody List<Long> list) throws IOException {
+        logger.info("param in{}",list);
+        ftpService.downloadZIP(list, resp);
+        return null;
     }
 }

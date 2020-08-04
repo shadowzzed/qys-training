@@ -50,6 +50,15 @@
         </if>
     </select>
 
+    <select id="selectBatchPath" parameterType="java.lang.Long" resultType="java.lang.String">
+        select file_path as filePath from t_upload_file
+        where
+        id in
+        <foreach collection="idList" item="item" separator="," open="(" close=")">
+            #{item}
+        </foreach>
+    </select>
+
 
 
 </mapper>

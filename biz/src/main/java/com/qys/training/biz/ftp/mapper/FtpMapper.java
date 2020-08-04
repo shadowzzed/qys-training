@@ -2,6 +2,7 @@ package com.qys.training.biz.ftp.mapper;
 
 import com.qys.training.biz.ftp.entity.File;
 import com.qys.training.biz.ftp.entity.QueryFileParam;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
@@ -18,4 +19,5 @@ public interface FtpMapper {
 
 
     List<File> selectFileDB(QueryFileParam param);
+    List<String> selectBatchPath(@Param("idList")List<Long> idList);
 }
