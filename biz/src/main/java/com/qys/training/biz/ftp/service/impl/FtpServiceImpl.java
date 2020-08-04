@@ -3,6 +3,7 @@ package com.qys.training.biz.ftp.service.impl;
 import com.qys.training.base.enumerate.BizCodeEnum;
 import com.qys.training.base.exception.QysException;
 import com.qys.training.biz.ftp.config.FtpConfig;
+import com.qys.training.biz.ftp.entity.QueryFileParam;
 import com.qys.training.biz.ftp.mapper.FtpMapper;
 import com.qys.training.biz.ftp.service.FtpService;
 import org.slf4j.Logger;
@@ -23,6 +24,7 @@ import java.security.NoSuchAlgorithmException;
 import java.time.Instant;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -156,6 +158,11 @@ public class FtpServiceImpl implements FtpService {
             throw new QysException(BizCodeEnum.UNKNOWN_ERROR.getCode(), BizCodeEnum.UNKNOWN_ERROR.getDescription());
         }
         ftpMapper.deleteFile(id);
+    }
+
+    @Override
+    public List<com.qys.training.biz.ftp.entity.File> selectFileDB(QueryFileParam param) {
+        return ftpMapper.selectFileDB(param);
     }
 
     private String getMD5(MessageDigest md) {

@@ -32,4 +32,24 @@
     <delete id="deleteFile" parameterType="java.lang.Long">
         delete from t_upload_file where id = #{id}
     </delete>
+
+    <select id="selectFileDB" parameterType="com.qys.training.biz.ftp.entity.QueryFileParam" resultType="com.qys.training.biz.ftp.entity.File">
+        select id, file_name as fileName, file_path as filePath, file_hash as fileHash, file_size as fileSize from t_upload_file
+        where 1 = 1
+        <if test="fileName != null">
+            and file_name = #{fileName}
+        </if>
+        <if test="startSize > 0">
+             and file_size &gt; #{startSize}
+        </if>
+        <if test="endSize > 0">
+             and file_size &lt; #{endSize}
+        </if>
+        <if test="currentPage != 0 and pageSize != 0">
+        limit #{currentPage},#{pageSize}
+        </if>
+    </select>
+
+
+
 </mapper>

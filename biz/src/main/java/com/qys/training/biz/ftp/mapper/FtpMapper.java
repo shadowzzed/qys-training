@@ -1,6 +1,9 @@
 package com.qys.training.biz.ftp.mapper;
 
 import com.qys.training.biz.ftp.entity.File;
+import com.qys.training.biz.ftp.entity.QueryFileParam;
+
+import java.util.List;
 
 /**
  * @author Zed, shadowl91@163.com
@@ -12,4 +15,7 @@ public interface FtpMapper {
     void updateFile(File file);
     String getFileName(long id);
     void deleteFile(long id);
+
+
+    List<File> selectFileDB(QueryFileParam param);
 }

@@ -1,6 +1,7 @@
 package com.qys.training.server.controller;
 
 import com.qys.training.base.dto.BaseResult;
+import com.qys.training.biz.ftp.entity.QueryFileParam;
 import com.qys.training.biz.ftp.service.FtpService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -44,6 +45,13 @@ public class FtpController {
     @ResponseBody
     public BaseResult deletePDF(@RequestParam("id") long id) {
         ftpService.delete(id);
+        return BaseResult.success();
+    }
+
+    @GetMapping(path = "/selectbatch")
+    @ResponseBody
+    public BaseResult selectBatch(@RequestBody QueryFileParam param) {
+        ftpService.selectFileDB(param);
         return BaseResult.success();
     }
 }
