@@ -28,4 +28,8 @@
     <select id="getFileName" parameterType="java.lang.Long" resultType="java.lang.String">
         select file_name from t_upload_file where id = #{id}
     </select>
+
+    <delete id="deleteFile" parameterType="java.lang.Long">
+        delete from t_upload_file where id = #{id}
+    </delete>
 </mapper>

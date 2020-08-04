@@ -11,4 +11,5 @@ public interface FtpMapper {
     String getFilePath(long id);
     void updateFile(File file);
     String getFileName(long id);
+    void deleteFile(long id);
 }

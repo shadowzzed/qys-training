@@ -43,6 +43,7 @@ public class FtpController {
     @DeleteMapping(path = "/delete")
     @ResponseBody
     public BaseResult deletePDF(@RequestParam("id") long id) {
+        ftpService.delete(id);
         return BaseResult.success();
     }
 }

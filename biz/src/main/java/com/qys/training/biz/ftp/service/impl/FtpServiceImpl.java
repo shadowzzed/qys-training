@@ -155,6 +155,7 @@ public class FtpServiceImpl implements FtpService {
         if (!file.delete()) {
             throw new QysException(BizCodeEnum.UNKNOWN_ERROR.getCode(), BizCodeEnum.UNKNOWN_ERROR.getDescription());
         }
+        ftpMapper.deleteFile(id);
     }
 
     private String getMD5(MessageDigest md) {
