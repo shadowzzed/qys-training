@@ -13,7 +13,7 @@
         <module>biz</module>
 		<module>sql</module>
 		<module>cache</module>
-		<module>client</module>
+		<module>openapi</module>
 	</modules>
     <packaging>pom</packaging>
 

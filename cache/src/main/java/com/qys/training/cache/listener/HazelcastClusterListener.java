@@ -29,6 +29,5 @@ public class HazelcastClusterListener implements ClientListener {
     @Override
     public void clientDisconnected(Client client) {
         logger.info("client{} disconnected", client);
-
     }
 }

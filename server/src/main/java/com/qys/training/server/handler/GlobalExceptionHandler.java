@@ -23,7 +23,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(Exception.class)
     public @ResponseBody
     BaseResult globalExceptionHandler(HttpServletResponse response, Exception e) throws Exception {
-//        e.printStackTrace();
+        e.printStackTrace();
         BaseResult result = null;
         if (e instanceof QysException) {// 业务异常
             QysException bizException = (QysException) e;
