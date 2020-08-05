@@ -45,18 +45,22 @@ public class FtpServiceImpl implements FtpService {
     private FtpMapper ftpMapper;
 
     public int upload(MultipartFile multipartFile) {
+        // 参数校验
         if (multipartFile == null)
             throw new QysException(BizCodeEnum.LOST_PARAM.getCode(), BizCodeEnum.LOST_PARAM.getDescription());
+        // 判断是否为pdf文本
         final String originalFilename = multipartFile.getOriginalFilename();
         if (!originalFilename.endsWith(".pdf"))
             throw new QysException(BizCodeEnum.WRONG_PARAM.getCode(), BizCodeEnum.WRONG_PARAM.getDescription());
         logger.info("upload -- get file name = {}", originalFilename);
+        // 判断是否大于10M
         final long limitSize = this.getLimitSize();
         final long fileSize = multipartFile.getSize();
         logger.info("get limitsize = {}", limitSize);
         if (fileSize > limitSize)
             throw new QysException(BizCodeEnum.FILE_TOO_LARGE.getCode(), BizCodeEnum.FILE_TOO_LARGE.getDescription());
         logger.info("文件总共{} byte", fileSize);
+        // 开始上传
         com.qys.training.biz.ftp.entity.File file_db = new com.qys.training.biz.ftp.entity.File();
         file_db.setFileSize(fileSize);
         file_db.setFileName(originalFilename);
@@ -85,6 +89,8 @@ public class FtpServiceImpl implements FtpService {
             logger.info("插入数据库文件{}", file_db);
             return ftpMapper.insertFile(file_db);
         } catch (IOException | NoSuchAlgorithmException e) {
+            // 异常删除文件，保证数据库和文件系统一致性
+            file.delete();
             throw new QysException(BizCodeEnum.UNKNOWN_ERROR.getCode(), BizCodeEnum.UNKNOWN_ERROR.getDescription());
         }
     }
@@ -93,6 +99,7 @@ public class FtpServiceImpl implements FtpService {
     public void update(MultipartFile multipartFile, long fileId) {
         this.checkId(fileId);
         final String filePath = ftpMapper.getFilePath(fileId);
+        logger.info("需要更新的文件ID：{}", fileId);
         if (StringUtils.isEmpty(filePath))
             throw new QysException(BizCodeEnum.FILE_NOT_EXISTED.getCode(), BizCodeEnum.FILE_NOT_EXISTED.getDescription());
         File file = new File(filePath);
