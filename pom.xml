@@ -12,6 +12,7 @@
         <module>base</module>
         <module>biz</module>
 		<module>sql</module>
+		<module>cache</module>
 	</modules>
     <packaging>pom</packaging>
 
@@ -87,6 +88,11 @@
 	            <version>${spring.boot.version}</version>
 	            <scope>test</scope>
 	        </dependency>
+			<dependency>
+				<groupId>com.hazelcast</groupId>
+				<artifactId>hazelcast-client</artifactId>
+				<version>${hazelcast.version}</version>
+			</dependency>
 	    </dependencies>
     </dependencyManagement>
 
