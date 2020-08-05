@@ -15,5 +15,9 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
+        <dependency>
+            <groupId>com.qys.training</groupId>
+            <artifactId>biz</artifactId>
+        </dependency>
     </dependencies>
 </project>
