@@ -44,7 +44,7 @@ public class FtpServiceImpl implements FtpService {
     @Autowired
     private FtpMapper ftpMapper;
 
-    public int upload(MultipartFile multipartFile) {
+    public long upload(MultipartFile multipartFile) {
         // 参数校验
         if (multipartFile == null)
             throw new QysException(BizCodeEnum.LOST_PARAM.getCode(), BizCodeEnum.LOST_PARAM.getDescription());
@@ -77,7 +77,8 @@ public class FtpServiceImpl implements FtpService {
             file_db.setFilePath(filePath);
             file_db.setFileHash(md5);
             logger.info("插入数据库文件{}", file_db);
-            return ftpMapper.insertFile(file_db);
+            ftpMapper.insertFile(file_db);
+            return file_db.getId();
         } catch (IOException | NoSuchAlgorithmException e) {
             // 异常删除文件，保证数据库和文件系统一致性
             file.delete();
@@ -193,6 +194,8 @@ public class FtpServiceImpl implements FtpService {
         // limit语法是第一个参数为起始行，第二个参数为返回行数
         if (param.getPageSize() != 0)
             param.setCurrentPage(param.getPageSize() * param.getCurrentPage());
+        if (StringUtils.isEmpty(param.getFileName()))
+            param.setFileName("%" + param.getFileName() + "%");
         return ftpMapper.selectFileDB(param);
     }
 

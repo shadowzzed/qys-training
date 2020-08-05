@@ -38,6 +38,7 @@ public class FtpMapperTest {
         file.setFileSize(83347L);
         file.setFilePath("base/files/2020-08-04/537fd20e-29cf-41f5-97a7-12a5e72f122b");
         System.out.println(ftpMapper.insertFile(file));
+        System.out.println(file.getId());
     }
 
     @Test

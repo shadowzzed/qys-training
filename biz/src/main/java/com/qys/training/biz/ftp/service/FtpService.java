@@ -19,7 +19,7 @@ public interface FtpService {
      * @param file
      * @return
      */
-    int upload(MultipartFile file);
+    long upload(MultipartFile file);
 
     /**
      * 更新

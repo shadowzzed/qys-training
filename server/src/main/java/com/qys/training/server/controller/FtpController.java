@@ -30,7 +30,7 @@ public class FtpController {
     @PostMapping(path = "/upload")
     @ResponseBody
     public BaseResult uploadPDF(@RequestParam("file") MultipartFile file) {
-        final int upload = ftpService.upload(file);
+        final long upload = ftpService.upload(file);
         return BaseResult.success(upload);
     }
 
