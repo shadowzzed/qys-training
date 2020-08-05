@@ -164,6 +164,8 @@ public class FtpServiceImpl implements FtpService {
 
     @Override
     public List<com.qys.training.biz.ftp.entity.File> selectFileDB(QueryFileParam param) {
+        if (param.getPageSize() != 0)
+            param.setCurrentPage(param.getPageSize() * param.getCurrentPage());
         return ftpMapper.selectFileDB(param);
     }
 

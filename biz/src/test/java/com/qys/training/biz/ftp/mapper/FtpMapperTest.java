@@ -59,7 +59,9 @@ public class FtpMapperTest {
     public void selectFileDBTest() {
         QueryFileParam p = new QueryFileParam();
 //        p.setEndSize(1000000000L);
-        p.setStartSize(1L);
+//        p.setStartSize(1L);
+        p.setCurrentPage(1 * 5);
+        p.setPageSize(5);
         final List<File> list = ftpMapper.selectFileDB(p);
         list.forEach(System.out::println);
         System.out.println(list.size());

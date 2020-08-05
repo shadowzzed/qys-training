@@ -46,7 +46,7 @@
              and file_size &lt; #{endSize}
         </if>
         <if test="currentPage != 0 and pageSize != 0">
-        limit #{currentPage},#{pageSize}
+        limit #{currentPage}, #{pageSize}
         </if>
     </select>
 
