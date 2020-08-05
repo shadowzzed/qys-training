@@ -13,6 +13,7 @@
         <module>biz</module>
 		<module>sql</module>
 		<module>cache</module>
+		<module>client</module>
 	</modules>
     <packaging>pom</packaging>
 

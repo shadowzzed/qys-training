@@ -1,5 +1,8 @@
 package com.qys.training.cache.config;
 
+import com.hazelcast.client.HazelcastClient;
+import com.hazelcast.client.config.ClientConfig;
+import com.hazelcast.client.config.ClientNetworkConfig;
 import com.hazelcast.config.*;
 import com.hazelcast.core.ClientService;
 import com.hazelcast.core.Hazelcast;
@@ -49,7 +52,7 @@ public class HazelcastConfig {
     @Autowired
     ApplicationContext applicationContext;
 
-    @Bean
+    @Bean(value = "server")
     public HazelcastInstance hazelcastServer() {
 
         // 基础配置
@@ -95,8 +98,10 @@ public class HazelcastConfig {
         HazelcastInstance server = Hazelcast.newHazelcastInstance(config);
         ClientService clientService = server.getClientService();
         clientService.addClientListener(new HazelcastClusterListener(applicationContext));
-        logger.info("hazelcast started");
+        logger.info("hazelcast server started");
 
         return server;
     }
+
+
 }

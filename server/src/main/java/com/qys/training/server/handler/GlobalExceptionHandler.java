@@ -5,6 +5,7 @@ import com.qys.training.base.enumerate.BizCodeEnum;
 import com.qys.training.base.exception.QysException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -22,6 +23,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(Exception.class)
     public @ResponseBody
     BaseResult globalExceptionHandler(HttpServletResponse response, Exception e) throws Exception {
+//        e.printStackTrace();
         BaseResult result = null;
         if (e instanceof QysException) {// 业务异常
             QysException bizException = (QysException) e;
