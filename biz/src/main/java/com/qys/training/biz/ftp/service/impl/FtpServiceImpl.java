@@ -196,6 +196,8 @@ public class FtpServiceImpl implements FtpService {
             param.setCurrentPage(param.getPageSize() * param.getCurrentPage());
         if (StringUtils.isEmpty(param.getFileName()))
             param.setFileName("%" + param.getFileName() + "%");
+        if (param.getStartSize() > param.getEndSize() && param.getEndSize() != 0)
+            throw new QysException(BizCodeEnum.WRONG_PARAM.getCode(), BizCodeEnum.WRONG_PARAM.getDescription());
         return ftpMapper.selectFileDB(param);
     }
 
