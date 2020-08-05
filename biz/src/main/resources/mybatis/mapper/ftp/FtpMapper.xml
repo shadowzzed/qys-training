@@ -50,8 +50,8 @@
         </if>
     </select>
 
-    <select id="selectBatchPath" parameterType="java.lang.Long" resultType="java.lang.String">
-        select file_path as filePath from t_upload_file
+    <select id="selectBatchPath" parameterType="java.lang.Long" resultType="com.qys.training.biz.ftp.entity.File">
+        select file_path as filePath, file_name as fileName from t_upload_file
         where
         id in
         <foreach collection="idList" item="item" separator="," open="(" close=")">

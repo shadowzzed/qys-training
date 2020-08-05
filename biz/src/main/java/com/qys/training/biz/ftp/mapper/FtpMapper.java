@@ -56,5 +56,5 @@ public interface FtpMapper {
      * @param idList
      * @return
      */
-    List<String> selectBatchPath(@Param("idList")List<Long> idList);
+    List<File> selectBatchPath(@Param("idList")List<Long> idList);
 }

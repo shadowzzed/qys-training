@@ -59,7 +59,7 @@ public class FtpServiceImpl implements FtpService {
         if (!dir.exists())
             dir.mkdirs();
         final UUID uuid = UUID.randomUUID();
-        String filePath = dirPath + "/" + uuid;
+        String filePath = dirPath + "/" + uuid + ".pdf";
         logger.info("创建文件，文件名为{}", filePath);
         File file = new File(filePath);
         try (InputStream inputStream = multipartFile.getInputStream();
@@ -203,7 +203,7 @@ public class FtpServiceImpl implements FtpService {
         resp.setCharacterEncoding("UTF-8");
         resp.setContentType("application/x-msdownload");
         resp.setHeader("Content-Disposition", "attachment;filename=" + URLEncoder.encode("zip.zip", "UTF-8"));
-        final List<String> pathList = ftpMapper.selectBatchPath(list);
+        final List<com.qys.training.biz.ftp.entity.File> pathList = ftpMapper.selectBatchPath(list);
         this.zipFile(pathList, resp.getOutputStream());
     }
 
@@ -249,17 +249,18 @@ public class FtpServiceImpl implements FtpService {
         return null;
     }
 
-    private void zipFile(List<String> filePath, OutputStream outputStream) throws IOException {
+    private void zipFile(List<com.qys.training.biz.ftp.entity.File> filePath, OutputStream outputStream) throws IOException {
         byte[] bytes = new byte[1024];
         ZipOutputStream zipOutputStream = new ZipOutputStream(outputStream);
-        for (String path : filePath) {
-            logger.info("get path{}",path);
-            final File file = new File(path);
+        int count = 0;
+        for (com.qys.training.biz.ftp.entity.File file_db : filePath) {
+            logger.info("get path{}",file_db.getFilePath());
+            final File file = new File(file_db.getFilePath());
             if (!file.exists())
                 continue;
             try (InputStream inputStream = new FileInputStream(file)) {
-                logger.info("filename {}",file.getName());
-                zipOutputStream.putNextEntry(new ZipEntry(file.getName()));
+                logger.info("filename {}",file_db.getFileName());
+                zipOutputStream.putNextEntry(new ZipEntry(++count + "." + file_db.getFileName()));
                 int n = 0;
                 while ((n = inputStream.read(bytes)) != -1) {
                     zipOutputStream.write(bytes, 0, n);
