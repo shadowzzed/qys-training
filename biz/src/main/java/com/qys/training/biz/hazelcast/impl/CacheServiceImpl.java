@@ -47,6 +47,8 @@ public class CacheServiceImpl implements CacheService {
         Object o = iMap.get(key);
         if (o == null) {
             o = mapper.getConfigValue(key);
+            if (o == null)
+                throw new QysException(BizCodeEnum.ERROR.getCode(), BizCodeEnum.ERROR.getDescription());
             iMap.put(key, o, config.expire, TimeUnit.SECONDS);
         }
         return o;

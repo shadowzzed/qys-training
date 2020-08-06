@@ -3,12 +3,10 @@ package com.qys.training.server.controller;
 import com.qys.training.base.dto.BaseResult;
 import com.qys.training.biz.auth.entity.User;
 import com.qys.training.biz.auth.service.UserService;
-import com.sun.org.apache.regexp.internal.RE;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.util.HashMap;
 import java.util.Map;
