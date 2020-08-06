@@ -27,11 +27,11 @@ public class RestUtils {
         try {
             Map<String, Object> uriVar = new HashMap<>();
             uriVar.put("port", myPort);
-            restTemplate.getForEntity(host, Object.class, uriVar);
+            restTemplate.getForEntity(host + "?" + myPort, Object.class, uriVar);
             return true;
         } catch (Exception e) {
             logger.error("无法通信");
-            e.printStackTrace();
+//            e.printStackTrace();
         }
         return false;
     }

@@ -1,7 +1,9 @@
 package com.qys.training.biz.heartbeat;
 
+import com.qys.training.biz.hazelcast.entity.SysConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.util.StringUtils;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -10,7 +12,10 @@ import java.io.OutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * @author Zed, shadowl91@163.com
@@ -19,6 +24,8 @@ import java.util.List;
 public class HeartBeatRunnable implements Runnable {
 
     private static final List<String> addList = new ArrayList<>();
+
+    private static final Pattern pattern = Pattern.compile("[0-9]{4,}");
 
     private static final Logger logger = LoggerFactory.getLogger(HeartBeatRunnable.class);
 
@@ -51,7 +58,7 @@ public class HeartBeatRunnable implements Runnable {
             try {
                 final Socket client = socket.accept();
                 final String add = heartBeatSocket(client);
-                if (isAddToList)
+                if (isAddToList && !StringUtils.isEmpty(add))
                     addList.add(add);
                 Thread.sleep(100L);
             } catch (IOException | InterruptedException e) {
@@ -64,13 +71,28 @@ public class HeartBeatRunnable implements Runnable {
         try (BufferedReader br = new BufferedReader(new InputStreamReader(client.getInputStream()));
              final OutputStream outputStream = client.getOutputStream()) {
             final String startLine = br.readLine();
+//            logger.info(startLine);
             if (startLine.startsWith("GET")) {
-                final String[] strings = startLine.split("/");
+                final Matcher matcher = pattern.matcher(startLine);
+                String substring = null;
+                if (matcher.find()) {
+                    substring = matcher.group();
+                }
+                if (StringUtils.isEmpty(substring)) {
+                    logger.error("没有获取端口号，检测客户机的端口号");
+                    return null;
+                }
+//                final String[] strings = startLine.split("/");
+//                logger.info("分组结果");
+//                Arrays.stream(strings).forEach(logger::info);
+//                logger.info("分组结果");
+//                final String substring = strings[1].substring(1, 5);
+//                logger.info("substring" + substring);
                 final String response = this.getResponse();
-                logger.info("{}",client.getInetAddress());
+                logger.info("keep alive {}:{}",client.getInetAddress(), Integer.valueOf(substring));
                 outputStream.write(response.getBytes());
                 outputStream.flush();
-                return "http:/" + client.getInetAddress() + ":" + client.getPort();
+                return "http:/" + client.getInetAddress() + ":" + Integer.valueOf(substring);
             }
 
         } catch (IOException e) {

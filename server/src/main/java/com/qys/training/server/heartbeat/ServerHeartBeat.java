@@ -32,9 +32,10 @@ public class ServerHeartBeat {
     @Scheduled(cron = "0/15 * * * * ? ")
     public void sendHeartBeat() {
         final List<String> list = HeartBeatRunnable.getAddList();
-        list.forEach(logger::info);
+//        list.forEach(logger::info);
         logger.info("开始检测客户端心跳，目前list.size = {}", list.size());
         list.removeIf(host -> !RestUtils.sendGet(host, port));
+        logger.info("存活列表--------");
         list.forEach(logger::info);
     }
 }
