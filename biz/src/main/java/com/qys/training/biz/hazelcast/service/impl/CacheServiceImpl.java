@@ -1,11 +1,10 @@
-package com.qys.training.biz.hazelcast.impl;
+package com.qys.training.biz.hazelcast.service.impl;
 
-import clojure.lang.Obj;
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.IMap;
 import com.qys.training.base.enumerate.BizCodeEnum;
 import com.qys.training.base.exception.QysException;
-import com.qys.training.biz.hazelcast.CacheService;
+import com.qys.training.biz.hazelcast.service.CacheService;
 import com.qys.training.biz.hazelcast.QYSHazelcastClientConfig;
 import com.qys.training.biz.hazelcast.mapper.SysConfigMapper;
 import org.slf4j.Logger;

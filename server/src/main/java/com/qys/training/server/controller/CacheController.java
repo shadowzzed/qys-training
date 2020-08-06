@@ -2,7 +2,7 @@ package com.qys.training.server.controller;
 
 import com.qys.training.base.dto.BaseResult;
 import com.qys.training.biz.hazelcast.entity.CacheDTO;
-import com.qys.training.biz.hazelcast.impl.CacheServiceImpl;
+import com.qys.training.biz.hazelcast.service.impl.CacheServiceImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -1,4 +1,4 @@
-package com.qys.training.biz.hazelcast;
+package com.qys.training.biz.hazelcast.service;
 
 import com.hazelcast.core.HazelcastInstance;
 import org.springframework.beans.factory.annotation.Autowired;
