@@ -112,4 +112,11 @@ public class PDFUtilsTest {
         document.close();
     }
 
+    @Test
+    public void test() {
+        File file = new File("src\\main\\resources\\fonts\\simhei.ttf");
+        System.out.println(file);
+    }
+
+
 }

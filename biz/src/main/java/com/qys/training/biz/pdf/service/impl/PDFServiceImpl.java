@@ -4,6 +4,7 @@ import clojure.lang.Obj;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.itextpdf.text.BaseColor;
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.pdf.PdfReader;
 import com.itextpdf.text.pdf.PdfStamper;
@@ -61,7 +62,9 @@ public class PDFServiceImpl implements PDFService {
         }
         final String idString = (String) map.get("id");
         final long id = Long.parseLong(idString);
-        return ftpMapper.getFilePath(id);
+        final String filePath = ftpMapper.getFilePath(id);
+        File file = new File(filePath);
+        return filePath;
     }
 
     // 更新文件
@@ -74,13 +77,15 @@ public class PDFServiceImpl implements PDFService {
         try {
             File file = new File(path);
             final String parent_path = file.getParent();
-            String newPath = parent_path + "/" + uuid;
+            String newPath = parent_path + "/" + uuid + ".pdf";
             PdfReader reader = new PdfReader(path);
             PdfStamper stamper = new PdfStamper(reader, new FileOutputStream(newPath));
-            PDFUtils.addText(reader, stamper, config, "src\\main\\resources\\fonts\\");
+            PDFUtils.addText(reader, stamper, config, "C:\\Users\\Administrator\\IdeaProjects\\qys-training\\biz\\src\\main\\resources\\fonts\\");
+            file.delete();
             // 更新数据库
             this.updateDB(newPath, map);
         } catch (Exception e) {
+            e.printStackTrace();
             throw new QysException(BizCodeEnum.UNKNOWN_ERROR.getCode(), BizCodeEnum.UNKNOWN_ERROR.getDescription());
         }
     }
@@ -107,14 +112,36 @@ public class PDFServiceImpl implements PDFService {
         PDFTextConfig config = new PDFTextConfig();
         if (!map.containsKey(text))
             throw new QysException(BizCodeEnum.LOST_PARAM.getCode(), BizCodeEnum.LOST_PARAM.getDescription());
-        final PDFTextConfig.Font font = (PDFTextConfig.Font) map.get(font_style);
-        if (font != null)
-            config.setFont(font);
+        final String font_style_string = (String) map.get(font_style);
+        switch (font_style_string) {
+            case "SONG_TI":
+                config.setFont(PDFTextConfig.Font.SONG_TI);
+                break;
+            case "HEI_TI":
+                config.setFont(PDFTextConfig.Font.HEI_TI);
+                break;
+            case "KAI_TI":
+                config.setFont(PDFTextConfig.Font.KAI_TI);
+                break;
+            default:
+                break;
+        }
+//        final PDFTextConfig.Font font = (PDFTextConfig.Font) map.get(font_style);
+//        if (font != null)
+//            config.setFont(font);
         final float x = this.getX(map);
         final float y = this.getY(map);
         config.setX(x);
         config.setY(y);
         config.setText(((String) map.get(text)));
+        config.setPageNum(1);
+        config.setFontSize(50);
+        config.setBaseColor(BaseColor.BLACK);
+        config.setStyle("BOLD");
+        config.setAlign("ALIGN_LEFT");
+        config.setOrientation("horizontal");
+        config.setHeightSpec(20);
+        config.setWidthSpec(20);
         return config;
     }
 
