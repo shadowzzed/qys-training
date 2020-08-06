@@ -27,6 +27,9 @@ public class OpenapiApplication {
     @Value("${qiyuesuo.heart.beat.server}")
     private String host;
 
+    @Value("${qiyuesuo.heart.beat.myport}")
+    private int port;
+
     private static final Logger logger = LoggerFactory.getLogger(OpenapiApplication.class);
 
     public static void main(String[] args) {
@@ -36,8 +39,8 @@ public class OpenapiApplication {
 
     @Bean
     public HearBeat hearBeat() {
-        RestUtils.sendGet(host, 8888);
-        new Thread(new HeartBeatRunnable(8888, false)).start();
+        RestUtils.sendGet(host, port);
+        new Thread(new HeartBeatRunnable(port, false)).start();
         return null;
     }
 

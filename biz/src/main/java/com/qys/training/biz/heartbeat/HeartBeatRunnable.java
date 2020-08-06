@@ -13,6 +13,7 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -58,8 +59,19 @@ public class HeartBeatRunnable implements Runnable {
             try {
                 final Socket client = socket.accept();
                 final String add = heartBeatSocket(client);
-                if (isAddToList && !StringUtils.isEmpty(add))
-                    addList.add(add);
+                if (isAddToList && !StringUtils.isEmpty(add)) {
+                    boolean flag = true;
+                    final HashMap<String, Integer> map = new HashMap<>();
+                    for (String str : addList) {
+                        if (map.containsKey(str)) {
+                            flag = false;
+                            break;
+                        }
+                        map.put(str, 1);
+                    }
+                    if (flag)
+                        addList.add(add);
+                }
                 Thread.sleep(100L);
             } catch (IOException | InterruptedException e) {
                 e.printStackTrace();
