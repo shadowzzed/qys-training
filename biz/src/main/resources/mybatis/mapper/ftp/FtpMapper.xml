@@ -21,7 +21,7 @@
     </select>
 
     <update id="updateFile" parameterType="com.qys.training.biz.ftp.entity.File">
-        update t_upload_file set file_name = #{fileName}, file_size = #{fileSize}, file_hash = #{fileHash}
+        update t_upload_file set file_name = #{fileName}, file_size = #{fileSize}, file_hash = #{fileHash}, file_path = #{filePath}
         where id = #{id}
     </update>
 
@@ -58,7 +58,5 @@
             #{item}
         </foreach>
     </select>
-
-
 
 </mapper>
