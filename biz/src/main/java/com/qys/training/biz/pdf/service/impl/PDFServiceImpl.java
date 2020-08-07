@@ -11,7 +11,9 @@ import com.itextpdf.text.pdf.PdfStamper;
 import com.qys.training.base.enumerate.BizCodeEnum;
 import com.qys.training.base.exception.QysException;
 import com.qys.training.biz.ftp.mapper.FtpMapper;
+import com.qys.training.biz.pdf.FontMapHelper;
 import com.qys.training.biz.pdf.PDFUtils;
+import com.qys.training.biz.pdf.config.PDFServiceConfig;
 import com.qys.training.biz.pdf.entity.PDFTextConfig;
 import com.qys.training.biz.pdf.service.PDFService;
 import org.slf4j.Logger;
@@ -38,6 +40,9 @@ public class PDFServiceImpl implements PDFService {
 
     @Autowired
     FtpMapper ftpMapper;
+
+    @Autowired
+    PDFServiceConfig pdfServiceConfig;
 
     @Override
     public void updatePDF(String json) throws JsonProcessingException {
@@ -80,7 +85,7 @@ public class PDFServiceImpl implements PDFService {
             String newPath = parent_path + "/" + uuid + ".pdf";
             PdfReader reader = new PdfReader(path);
             PdfStamper stamper = new PdfStamper(reader, new FileOutputStream(newPath));
-            PDFUtils.addText(reader, stamper, config, "C:\\Users\\Administrator\\IdeaProjects\\qys-training\\biz\\src\\main\\resources\\fonts\\");
+            PDFUtils.addText(reader, stamper, config, pdfServiceConfig.fontPathBase);
             file.delete();
             // 更新数据库
             this.updateDB(newPath, map);
@@ -113,19 +118,7 @@ public class PDFServiceImpl implements PDFService {
         if (!map.containsKey(text))
             throw new QysException(BizCodeEnum.LOST_PARAM.getCode(), BizCodeEnum.LOST_PARAM.getDescription());
         final String font_style_string = (String) map.get(font_style);
-        switch (font_style_string) {
-            case "SONG_TI":
-                config.setFont(PDFTextConfig.Font.SONG_TI);
-                break;
-            case "HEI_TI":
-                config.setFont(PDFTextConfig.Font.HEI_TI);
-                break;
-            case "KAI_TI":
-                config.setFont(PDFTextConfig.Font.KAI_TI);
-                break;
-            default:
-                break;
-        }
+        config.setFont(FontMapHelper.getFontPath(font_style));
 //        final PDFTextConfig.Font font = (PDFTextConfig.Font) map.get(font_style);
 //        if (font != null)
 //            config.setFont(font);

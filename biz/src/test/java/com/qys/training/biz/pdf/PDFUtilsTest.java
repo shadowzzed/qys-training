@@ -6,7 +6,10 @@ import org.junit.Test;
 import org.springframework.util.StringUtils;
 
 import java.io.*;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Iterator;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -114,7 +117,9 @@ public class PDFUtilsTest {
 
     @Test
     public void test() {
-        File file = new File("src\\main\\resources\\fonts\\simhei.ttf");
+        System.out.println(PDFUtils.class.getClassLoader().getResource("").toString());
+        File file = new File(".\\resources\\fonts\\simhei.ttf");
+        System.out.println(file.exists());
         System.out.println(file);
     }
 
