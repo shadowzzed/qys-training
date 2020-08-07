@@ -48,20 +48,53 @@ public class FtpServiceImpl implements FtpService {
         // 参数校验
         if (multipartFile == null)
             throw new QysException(BizCodeEnum.LOST_PARAM.getCode(), BizCodeEnum.LOST_PARAM.getDescription());
-        String originalFilename = this.checkPDF(multipartFile);
-        long fileSize = this.checkFileSize(multipartFile);
-        // 开始上传
-        com.qys.training.biz.ftp.entity.File file_db = new com.qys.training.biz.ftp.entity.File();
-        file_db.setFileSize(fileSize);
-        file_db.setFileName(originalFilename);
+        // 创建今日文件夹
         final String dirPath = this.getTodayFileDir();
         File dir = new File(dirPath);
         if (!dir.exists())
             dir.mkdirs();
-        final UUID uuid = UUID.randomUUID();
-        String filePath = dirPath + "/" + uuid + ".pdf";
-        logger.info("创建文件，文件名为{}", filePath);
-        File file = new File(filePath);
+        // 写入
+        return this.writeToSys(multipartFile, dirPath, -1);
+    }
+
+    /**
+     * 判断是否是pdf
+     * @param multipartFile
+     * @return 原始文件名
+     */
+    private String checkPDF(MultipartFile multipartFile) {
+        // 判断是否为pdf文本
+        final String originalFilename = multipartFile.getOriginalFilename();
+        if (StringUtils.isEmpty(originalFilename) || !originalFilename.endsWith(".pdf"))
+            throw new QysException(BizCodeEnum.WRONG_PARAM.getCode(), BizCodeEnum.WRONG_PARAM.getDescription());
+        logger.info("upload -- get file name = {}", originalFilename);
+        return originalFilename;
+    }
+
+    /**
+     * 判断是否大于10MB
+     * @param multipartFile
+     * @return 文件大小
+     */
+    private Long checkFileSize(MultipartFile multipartFile) {
+        // 判断是否大于10M
+        final long limitSize = this.getLimitSize();
+        final long fileSize = multipartFile.getSize();
+        logger.info("get limitsize = {}", limitSize);
+        if (fileSize > limitSize)
+            throw new QysException(BizCodeEnum.FILE_TOO_LARGE.getCode(), BizCodeEnum.FILE_TOO_LARGE.getDescription());
+        logger.info("文件总共{} byte", fileSize);
+        return fileSize;
+    }
+
+    /**
+     * 写入文件系统
+     * @param multipartFile
+     * @param path
+     * @return 哈希值
+     */
+    private String writeToFileSysAndGetMd5(MultipartFile multipartFile, String path) {
+        File file = new File(path);
         try (InputStream inputStream = multipartFile.getInputStream();
              OutputStream outputStream = new FileOutputStream(file)) {
             MessageDigest md = MessageDigest.getInstance("MD5");
@@ -73,37 +106,41 @@ public class FtpServiceImpl implements FtpService {
                 md.update(bytes, 0, n);
             }
             logger.info("完成文件上传");
-            final String md5 = this.getMD5(md);
-            file_db.setFilePath(filePath);
-            file_db.setFileHash(md5);
-            logger.info("插入数据库文件{}", file_db);
-            ftpMapper.insertFile(file_db);
-            return file_db.getId();
+            return this.getMD5(md);
         } catch (IOException | NoSuchAlgorithmException e) {
-            // 异常删除文件，保证数据库和文件系统一致性
-            file.delete();
             throw new QysException(BizCodeEnum.UNKNOWN_ERROR.getCode(), BizCodeEnum.UNKNOWN_ERROR.getDescription());
         }
     }
 
-    private String checkPDF(MultipartFile multipartFile) {
-        // 判断是否为pdf文本
-        final String originalFilename = multipartFile.getOriginalFilename();
-        if (!originalFilename.endsWith(".pdf"))
-            throw new QysException(BizCodeEnum.WRONG_PARAM.getCode(), BizCodeEnum.WRONG_PARAM.getDescription());
-        logger.info("upload -- get file name = {}", originalFilename);
-        return originalFilename;
-    }
-
-    private Long checkFileSize(MultipartFile multipartFile) {
-        // 判断是否大于10M
-        final long limitSize = this.getLimitSize();
-        final long fileSize = multipartFile.getSize();
-        logger.info("get limitsize = {}", limitSize);
-        if (fileSize > limitSize)
-            throw new QysException(BizCodeEnum.FILE_TOO_LARGE.getCode(), BizCodeEnum.FILE_TOO_LARGE.getDescription());
-        logger.info("文件总共{} byte", fileSize);
-        return fileSize;
+    /**
+     * 写入系统
+     * 分为两个部分 写入数据库，写入文件系统
+     * @param multipartFile
+     * @param id
+     * @return 表中的id
+     */
+    private long writeToSys(MultipartFile multipartFile, String basePath, long id) {
+        final String originalFilename = this.checkPDF(multipartFile);
+        final Long fileSize = this.checkFileSize(multipartFile);
+        com.qys.training.biz.ftp.entity.File file_db = new com.qys.training.biz.ftp.entity.File();
+        file_db.setFileSize(fileSize);
+        file_db.setFileName(originalFilename);
+        final UUID uuid = UUID.randomUUID();
+        String filePath = basePath + "/" + uuid.toString();
+        // 写入文件系统
+        final String md5 = this.writeToFileSysAndGetMd5(multipartFile, filePath);
+        file_db.setFileHash(md5);
+        file_db.setFilePath(filePath);
+        if (id > 0) {
+            logger.info("插入数据{}", file_db);
+            ftpMapper.insertFile(file_db);
+        }
+        else {
+            logger.info("更新数据{}", file_db);
+            file_db.setId(id);
+            ftpMapper.updateFile(file_db);
+        }
+        return file_db.getId();
     }
 
     @Override
@@ -118,34 +155,7 @@ public class FtpServiceImpl implements FtpService {
         File file = new File(filePath);
         if (!file.delete())
             throw new QysException(BizCodeEnum.UNKNOWN_ERROR.getCode(), BizCodeEnum.UNKNOWN_ERROR.getDescription());
-        // 新建文件
-        com.qys.training.biz.ftp.entity.File file_db = new com.qys.training.biz.ftp.entity.File();
-        final String originalFilename = this.checkPDF(multipartFile);
-        final long size = this.checkFileSize(multipartFile);
-        logger.info("update -- 文件名{},大小{}", originalFilename, size);
-        file_db.setFileName(originalFilename);
-        file_db.setFileSize(size);
-        try (InputStream inputStream = multipartFile.getInputStream();
-        OutputStream outputStream = new FileOutputStream(file)) {
-            MessageDigest md = MessageDigest.getInstance("MD5");
-            byte[] bytes = new byte[1024];
-            // 记录最后一次读取的结尾序号
-            int n = 0;
-            while ((n = inputStream.read(bytes)) != -1) {
-                outputStream.write(bytes, 0, n);
-                md.update(bytes, 0, n);
-            }
-            logger.info("完成文件上传");
-            final String md5 = this.getMD5(md);
-            file_db.setFileHash(md5);
-            file_db.setId(fileId);
-            ftpMapper.updateFile(file_db);
-            logger.info("修改的参数{}",file_db);
-        } catch (IOException | NoSuchAlgorithmException e) {
-            // 失败删除
-            file.delete();
-            throw new QysException(BizCodeEnum.UNKNOWN_ERROR.getCode(), BizCodeEnum.UNKNOWN_ERROR.getDescription());
-        }
+        this.writeToSys(multipartFile, file.getParent(), fileId);
     }
 
     @Override
@@ -177,7 +187,6 @@ public class FtpServiceImpl implements FtpService {
 
     @Override
     public void delete(long id) {
-        // TODO 这里如何保证一致
         this.checkId(id);
         final String filePath = ftpMapper.getFilePath(id);
         if (StringUtils.isEmpty(filePath))
