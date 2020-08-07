@@ -1,12 +1,13 @@
 package com.qys.training.biz.pdf.entity;
 
 import com.itextpdf.text.BaseColor;
+import com.qys.training.base.entity.BaseEntity;
 
 /**
  * @author Zed, shadowl91@163.com
  * @date 12:34 2020/8/6
  */
-public class PDFTextConfig {
+public class PDFTextConfig extends BaseEntity {
     private String text;
     private Font font;
     private String rgb;

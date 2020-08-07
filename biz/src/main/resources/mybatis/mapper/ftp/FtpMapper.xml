@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.qys.training.biz.ftp.mapper.FtpMapper" >
-    <insert id="insertFile" parameterType="com.qys.training.biz.ftp.entity.File" useGeneratedKeys="true" keyProperty="id">
+    <insert id="insertFile" parameterType="com.qys.training.biz.ftp.entity.FtpFile" useGeneratedKeys="true" keyProperty="id">
         INSERT INTO t_upload_file (
         file_name,
         file_size,
@@ -20,7 +20,7 @@
         select file_path from t_upload_file where id = #{id}
     </select>
 
-    <update id="updateFile" parameterType="com.qys.training.biz.ftp.entity.File">
+    <update id="updateFile" parameterType="com.qys.training.biz.ftp.entity.FtpFile">
         update t_upload_file set file_name = #{fileName}, file_size = #{fileSize}, file_hash = #{fileHash}, file_path = #{filePath}
         where id = #{id}
     </update>
@@ -33,7 +33,7 @@
         delete from t_upload_file where id = #{id}
     </delete>
 
-    <select id="selectFileDB" parameterType="com.qys.training.biz.ftp.entity.QueryFileParam" resultType="com.qys.training.biz.ftp.entity.File">
+    <select id="selectFileDB" parameterType="com.qys.training.biz.ftp.entity.QueryFileParam" resultType="com.qys.training.biz.ftp.entity.FtpFile">
         select id, file_name as fileName, file_path as filePath, file_hash as fileHash, file_size as fileSize from t_upload_file
         where 1 = 1
         <if test="fileName != null">
@@ -50,7 +50,7 @@
         </if>
     </select>
 
-    <select id="selectBatchPath" parameterType="java.lang.Long" resultType="com.qys.training.biz.ftp.entity.File">
+    <select id="selectBatchPath" parameterType="java.lang.Long" resultType="com.qys.training.biz.ftp.entity.FtpFile">
         select file_path as filePath, file_name as fileName from t_upload_file
         where
         id in

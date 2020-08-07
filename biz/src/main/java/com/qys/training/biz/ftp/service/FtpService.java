@@ -1,6 +1,6 @@
 package com.qys.training.biz.ftp.service;
 
-import com.qys.training.biz.ftp.entity.File;
+import com.qys.training.biz.ftp.entity.FtpFile;
 import com.qys.training.biz.ftp.entity.QueryFileParam;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -47,7 +47,7 @@ public interface FtpService {
      * @param param
      * @return
      */
-    List<File> selectFileDB(QueryFileParam param);
+    List<FtpFile> selectFileDB(QueryFileParam param);
 
     /**
      * 多文件压缩下载

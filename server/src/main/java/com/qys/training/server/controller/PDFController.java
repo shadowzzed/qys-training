@@ -2,6 +2,7 @@ package com.qys.training.server.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.qys.training.base.dto.BaseResult;
+import com.qys.training.biz.pdf.entity.PDFTextConfig;
 import com.qys.training.biz.pdf.service.impl.PDFServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -21,8 +22,8 @@ public class PDFController {
     PDFServiceImpl pdfService;
 
     @PostMapping("/update")
-    public BaseResult updatePDF(@RequestBody String json) throws JsonProcessingException {
-        pdfService.updatePDF(json);
+    public BaseResult updatePDF(@RequestBody PDFTextConfig config) throws JsonProcessingException {
+        pdfService.updatePDF(config);
         return BaseResult.success();
     }
 }

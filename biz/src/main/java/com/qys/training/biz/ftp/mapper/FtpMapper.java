@@ -1,6 +1,6 @@
 package com.qys.training.biz.ftp.mapper;
 
-import com.qys.training.biz.ftp.entity.File;
+import com.qys.training.biz.ftp.entity.FtpFile;
 import com.qys.training.biz.ftp.entity.QueryFileParam;
 import org.apache.ibatis.annotations.Param;
 
@@ -16,7 +16,7 @@ public interface FtpMapper {
      * @param file
      * @return
      */
-    int insertFile(File file);
+    int insertFile(FtpFile file);
 
     /**
      * 获得指定ID文件路径
@@ -29,7 +29,7 @@ public interface FtpMapper {
      * 更新文件
      * @param file
      */
-    void updateFile(File file);
+    void updateFile(FtpFile file);
 
     /**
      * 获取指定ID文件名称
@@ -49,12 +49,12 @@ public interface FtpMapper {
      * @param param
      * @return
      */
-    List<File> selectFileDB(QueryFileParam param);
+    List<FtpFile> selectFileDB(QueryFileParam param);
 
     /**
      * 批量查询文件路径，打包压缩下载
      * @param idList
      * @return
      */
-    List<File> selectBatchPath(@Param("idList")List<Long> idList);
+    List<FtpFile> selectBatchPath(@Param("idList")List<Long> idList);
 }

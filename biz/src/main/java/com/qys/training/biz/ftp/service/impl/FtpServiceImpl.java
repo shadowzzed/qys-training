@@ -3,6 +3,7 @@ package com.qys.training.biz.ftp.service.impl;
 import com.qys.training.base.enumerate.BizCodeEnum;
 import com.qys.training.base.exception.QysException;
 import com.qys.training.biz.ftp.config.FtpConfig;
+import com.qys.training.biz.ftp.entity.FtpFile;
 import com.qys.training.biz.ftp.entity.QueryFileParam;
 import com.qys.training.biz.ftp.mapper.FtpMapper;
 import com.qys.training.biz.ftp.service.FtpService;
@@ -12,7 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
@@ -21,7 +21,6 @@ import java.math.BigInteger;
 import java.net.URLEncoder;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.time.Instant;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -122,7 +121,7 @@ public class FtpServiceImpl implements FtpService {
     private long writeToSys(MultipartFile multipartFile, String basePath, long id) {
         final String originalFilename = this.checkPDF(multipartFile);
         final Long fileSize = this.checkFileSize(multipartFile);
-        com.qys.training.biz.ftp.entity.File file_db = new com.qys.training.biz.ftp.entity.File();
+        FtpFile file_db = new FtpFile();
         file_db.setFileSize(fileSize);
         file_db.setFileName(originalFilename);
         final UUID uuid = UUID.randomUUID();
@@ -199,7 +198,7 @@ public class FtpServiceImpl implements FtpService {
     }
 
     @Override
-    public List<com.qys.training.biz.ftp.entity.File> selectFileDB(QueryFileParam param) {
+    public List<FtpFile> selectFileDB(QueryFileParam param) {
         // limit语法是第一个参数为起始行，第二个参数为返回行数
         if (param.getPageSize() != 0)
             param.setCurrentPage(param.getPageSize() * param.getCurrentPage());
@@ -217,7 +216,7 @@ public class FtpServiceImpl implements FtpService {
         resp.setCharacterEncoding("UTF-8");
         resp.setContentType("application/x-msdownload");
         resp.setHeader("Content-Disposition", "attachment;filename=" + URLEncoder.encode(this.getDate() + ".zip", "UTF-8"));
-        final List<com.qys.training.biz.ftp.entity.File> pathList = ftpMapper.selectBatchPath(list);
+        final List<FtpFile> pathList = ftpMapper.selectBatchPath(list);
         this.zipFile(pathList, resp.getOutputStream());
     }
 
@@ -266,11 +265,11 @@ public class FtpServiceImpl implements FtpService {
         return null;
     }
 
-    private void zipFile(List<com.qys.training.biz.ftp.entity.File> filePath, OutputStream outputStream) throws IOException {
+    private void zipFile(List<FtpFile> filePath, OutputStream outputStream) throws IOException {
         byte[] bytes = new byte[1024];
         ZipOutputStream zipOutputStream = new ZipOutputStream(outputStream);
         int count = 0;
-        for (com.qys.training.biz.ftp.entity.File file_db : filePath) {
+        for (FtpFile file_db : filePath) {
             logger.info("get path{}",file_db.getFilePath());
             final File file = new File(file_db.getFilePath());
             if (!file.exists())

@@ -6,13 +6,13 @@ import com.qys.training.base.entity.BaseEntity;
  * @author Zed, shadowl91@163.com
  * @date 13:48 2020/8/4
  */
-public class File extends BaseEntity {
+public class FtpFile extends BaseEntity {
     private String fileName;
     private Long fileSize;
     private String fileHash;
     private String filePath;
 
-    public File() {
+    public FtpFile() {
     }
 
     @Override
