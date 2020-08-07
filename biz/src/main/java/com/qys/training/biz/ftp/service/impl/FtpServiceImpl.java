@@ -216,7 +216,7 @@ public class FtpServiceImpl implements FtpService {
             throw new QysException(BizCodeEnum.WRONG_PARAM.getCode(), BizCodeEnum.WRONG_PARAM.getDescription());
         resp.setCharacterEncoding("UTF-8");
         resp.setContentType("application/x-msdownload");
-        resp.setHeader("Content-Disposition", "attachment;filename=" + URLEncoder.encode("zip.zip", "UTF-8"));
+        resp.setHeader("Content-Disposition", "attachment;filename=" + URLEncoder.encode(this.getDate() + ".zip", "UTF-8"));
         final List<com.qys.training.biz.ftp.entity.File> pathList = ftpMapper.selectBatchPath(list);
         this.zipFile(pathList, resp.getOutputStream());
     }
@@ -229,10 +229,13 @@ public class FtpServiceImpl implements FtpService {
 
     private String getTodayFileDir() {
         final String filePath = ftpConfig.filePath;
+        return filePath + this.getDate();
+    }
+
+    private String getDate() {
         ZonedDateTime instant = ZonedDateTime.now();
         final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-        final String date = formatter.format(instant);
-        return filePath + date;
+        return formatter.format(instant);
     }
 
     private long getLimitSize() {
